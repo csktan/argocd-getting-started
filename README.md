@@ -56,7 +56,27 @@ Login with:
 - Username: `admin`
 - Password: (from the command above)
 
-### 4. Deploy the Sample Application
+### 4. Configure the ArgoCD Application
+
+Before deploying, you need to update the repository URL in the ArgoCD application configuration:
+
+```bash
+# Edit the application.yaml file
+nano apps/argocd/application.yaml
+```
+
+Update the `repoURL` in the file to point to your repository:
+
+```yaml
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git  # Change this to your repository
+    targetRevision: HEAD
+    path: apps/sample-app
+```
+
+### 5. Deploy the Sample Application
 
 Apply the ArgoCD application configuration:
 
@@ -68,7 +88,28 @@ kubectl create namespace sample-app
 kubectl apply -f apps/argocd/application.yaml
 ```
 
-### 5. Access the Sample Application
+#### Alternative: Deploy from Local Repository
+
+If you want to test locally without pushing to a remote repository, you can use a local Git server or file-based approach:
+
+##### Option 1: Using a local Git server (recommended for testing)
+
+```bash
+# In your project directory, create a bare repository
+git clone --bare . /tmp/argocd-getting-started.git
+
+# Update the application.yaml to use the local path
+# Change repoURL to: file:///tmp/argocd-getting-started.git
+```
+
+##### Option 2: Direct kubectl apply (bypasses ArgoCD GitOps)
+
+```bash
+# Apply the manifests directly (not recommended for production)
+kubectl apply -f apps/sample-app/ -n sample-app
+```
+
+### 6. Access the Sample Application
 
 Once deployed, you can access the sample application:
 
